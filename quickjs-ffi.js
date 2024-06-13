@@ -22,8 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import * as ffi from './quickjs-ffi.so'
-
 const dlCache = {}; // {'filename': {handle: ..., symbols: {'...': ...}}}
 
 function dlOpen(filename) {
