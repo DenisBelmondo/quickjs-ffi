@@ -25,7 +25,9 @@ SOFTWARE.
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <ffi.h>
+#ifndef _WIN32
 #include <gnu/lib-names.h>
+#endif
 #include <limits.h>
 #include <quickjs/quickjs-libc.h>
 #include <quickjs/quickjs.h>
@@ -622,8 +624,10 @@ static JSCFunctionListEntry funcs[] = {
     C_SIZEOF_DEF(uintptr_t),
     C_SIZEOF_DEF(int),
     C_SIZEOF_DEF(size_t),
+    #ifndef _WIN32
     C_MACRO_STRING_DEF(LIBC_SO),
     C_MACRO_STRING_DEF(LIBM_SO),
+    #endif
     //
     // libdl
     //
@@ -635,9 +639,11 @@ static JSCFunctionListEntry funcs[] = {
     C_MACRO_INT_DEF(RTLD_NOW),
     C_MACRO_INT_DEF(RTLD_GLOBAL),
     C_MACRO_INT_DEF(RTLD_LOCAL),
+#ifndef _WIN32
     C_MACRO_INT_DEF(RTLD_NODELETE),
     C_MACRO_INT_DEF(RTLD_NOLOAD),
     C_MACRO_INT_DEF(RTLD_DEEPBIND),
+#endif
 #if defined(_GNU_SOURCE)
     C_MACRO_UINTPTR_T_DEF(RTLD_DEFAULT),
     C_MACRO_UINTPTR_T_DEF(RTLD_NEXT),
