@@ -13,3 +13,6 @@ fib: fib.c
 null: null.c
 	gcc null.c -o null1
 	gcc null.c -o null2 -fPIC
+
+clean:
+	rm -f *.so *.dll *.dylib
