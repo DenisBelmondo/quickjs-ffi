@@ -145,7 +145,7 @@ primitiveTypes.uintptr_t = [ffi.ffi_type_uintptr_t, ffi.sizeof_uintptr_t, rint(f
 primitiveTypes.intptr_t = [ffi.ffi_type_intptr_t, ffi.sizeof_uintptr_t, rint(true, ffi.sizeof_uintptr_t), wint(ffi.sizeof_uintptr_t)];
 primitiveTypes.size_t = [ffi.ffi_type_size_t, ffi.sizeof_size_t, rint(false, ffi.sizeof_size_t), wint(ffi.sizeof_size_t)];
 
-class MemoryAllocator {
+export class MemoryAllocator {
     pointers = []
     alloc = size => {
         let ptr = ffi.malloc(size);
@@ -159,7 +159,7 @@ class MemoryAllocator {
     }
 }
 
-function allocUintptrArray(mem, ...vals) {
+export function allocUintptrArray(mem, ...vals) {
     let buflen = ffi.sizeof_uintptr_t * vals.length;
     let buf = mem.alloc(buflen);
     for (let i = 0; i < vals.length; i++) {
@@ -264,7 +264,7 @@ function getCifCacheIndex(nfixedargs, rrepr, ...areprs) {
     return JSON.stringify([nfixedargs, rrepr, [areprs]]);
 }
 
-function prepCif(nfixedargs, rrepr, ...areprs) {
+export function prepCif(nfixedargs, rrepr, ...areprs) {
     if (typeof nfixedargs === 'number') {
         if (nfixedargs > areprs.length) {
             throw new TypeError('nfixedargs must <= areprs.length');
@@ -328,7 +328,7 @@ class CStringAllocator {
     }
 }
 
-export class CFunction {
+export class CFunctionPtr {
     mem = new MemoryAllocator();
     cstr = new CStringAllocator();
     cif;
@@ -341,8 +341,8 @@ export class CFunction {
     aereprs;
     reoffsets;
     aeoffsets;
-    constructor(filename, symbol, ...args) {
-        this.cfuncptr = dlSym(filename, symbol);
+    constructor(cfuncptr, ...args) {
+        this.cfuncptr = cfuncptr;
         let c = prepCif(...args);
         this.cif = c.cif;
         this.cifcacheindex = c.index;
@@ -393,6 +393,12 @@ export class CFunction {
     free = () => {
         this.mem.free();
         this.cstr.free();
+    }
+}
+
+export class CFunction extends CFunctionPtr {
+    constructor(filename, symbol, ...args) {
+        super(dlSym(filename, symbol), ...args);
     }
 }
 
